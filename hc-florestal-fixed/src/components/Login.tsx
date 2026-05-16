@@ -1,15 +1,37 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { auth, googleProvider } from '../firebase';
-import { signInWithPopup } from 'firebase/auth';
+import { signInWithRedirect, getRedirectResult } from 'firebase/auth';
 import { LogIn } from 'lucide-react';
 import { motion } from 'motion/react';
 
 export const Login: React.FC = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    // Processa o retorno do redirect do Google
+    setLoading(true);
+    getRedirectResult(auth)
+      .then((result) => {
+        if (!result) setLoading(false);
+        // Se result existe, o onAuthStateChanged no App.tsx vai capturar o login
+      })
+      .catch((err) => {
+        console.error('Erro no redirect:', err);
+        setError('Erro ao autenticar. Tente novamente.');
+        setLoading(false);
+      });
+  }, []);
+
   const handleLogin = async () => {
     try {
-      await signInWithPopup(auth, googleProvider);
-    } catch (error) {
-      console.error('Login error:', error);
+      setLoading(true);
+      setError('');
+      await signInWithRedirect(auth, googleProvider);
+    } catch (err) {
+      console.error('Login error:', err);
+      setError('Erro ao iniciar login. Tente novamente.');
+      setLoading(false);
     }
   };
 
@@ -31,15 +53,24 @@ export const Login: React.FC = () => {
         
         <button 
           onClick={handleLogin}
-          className="group relative w-full max-w-sm bg-white text-black py-6 rounded-full font-black text-sm uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:bg-primary hover:text-white transition-all duration-500 shadow-2xl active:scale-[0.98]"
+          disabled={loading}
+          className="group relative w-full max-w-sm bg-white text-black py-6 rounded-full font-black text-sm uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:bg-primary hover:text-white transition-all duration-500 shadow-2xl active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
         >
-          <LogIn size={20} className="group-hover:translate-x-1 transition-transform" /> 
-          Acessar Plataforma
+          {loading ? (
+            <span className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+          ) : (
+            <LogIn size={20} className="group-hover:translate-x-1 transition-transform" />
+          )}
+          {loading ? 'Aguarde...' : 'Acessar Plataforma'}
         </button>
+
+        {error && (
+          <p className="mt-4 text-red-400 text-sm font-semibold">{error}</p>
+        )}
         
         <div className="mt-20 flex flex-col items-center gap-4">
           <p className="text-[10px] font-bold text-white/30 uppercase tracking-[0.3em]">
-            © 2026 GESTÃO FLORESTAL • v2.5
+            © 2026 GESTÃO FLORESTAL • v2.6
           </p>
           <div className="h-[1px] w-12 bg-white/10" />
         </div>
