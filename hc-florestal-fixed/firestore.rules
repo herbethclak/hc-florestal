@@ -1,0 +1,171 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: fields
+    // Fields: id, name, area, geneticMaterial, image
+    //
+    // Collection: stockMovements
+    // Fields: id, inputId, type, amount, date, invoiceNumber, recipient, location, description
+    //
+    // Collection: operators
+    // Fields: id, name, specialty, experience, status, avatar
+    //
+    // Collection: inputs
+    // Fields: id, name, activeIngredient, type, brand, stock, minStock, unit
+    //
+    // Collection: serviceOrders
+    // Fields: id, fieldId, operatorId, activity, targetRate, totalPlannedVolume, status, createdAt, completedAt, totalApplied, deviation
+    //
+    // Collection: dailyLogs
+    // Fields: id, osId, date, amount, operatorId
+    //
+    // Collection: activityCategories
+    // Fields: id, name, icon
+    //
+    // ===============================================================
+
+    // Helper Functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && 
+        (request.auth.token.email == "herbeth.comelli@gmail.com" ||
+         (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'));
+    }
+
+    function isManager() {
+      return isAuthenticated() && 
+        (isAdmin() || 
+         (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'manager'));
+    }
+
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+
+    function isValidNumber(field) {
+      return request.resource.data[field] is number;
+    }
+
+    // Rules
+    match /fields/{document=**} {
+      allow read: if isAuthenticated();
+      allow write: if isManager();
+    }
+
+    match /operators/{document=**} {
+      allow read: if isAuthenticated();
+      allow write: if isManager();
+    }
+
+    match /inputs/{document=**} {
+      allow read: if isAuthenticated();
+      // Operators can update stock since OS creation and stock movements always update
+      // both stockMovements and inputs in the same atomic batch.
+      allow write: if isAuthenticated();
+    }
+
+    match /fleet/{document=**} {
+      allow read: if isAuthenticated();
+      // Hour meter (horímetro) updates happen during log creation by any authenticated user
+      allow write: if isAuthenticated();
+    }
+
+    match /implements/{document=**} {
+      allow read: if isAuthenticated();
+      // Hour meter updates happen during log creation by any authenticated user
+      allow write: if isAuthenticated();
+    }
+
+    match /activityDefinitions/{document=**} {
+      allow read: if isAuthenticated();
+      allow write: if isManager();
+    }
+
+    function isValidActivityCategory(data) {
+      return data.name is string && data.name.size() > 0;
+    }
+
+    match /activityCategories/{categoryId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && isValidActivityCategory(request.resource.data);
+      allow update: if isAuthenticated() && isValidActivityCategory(request.resource.data);
+      allow delete: if isAuthenticated();
+    }
+
+    match /stockMovements/{movementId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated();
+    }
+
+    function isValidServiceOrder(data) {
+      return data.fieldId is string &&
+             data.operatorId is string &&
+             data.activity is string &&
+             data.targetRate is number &&
+             data.totalPlannedVolume is number &&
+             data.status in ['active', 'completed'];
+    }
+
+    match /serviceOrders/{osId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated();
+      allow delete: if isAdmin();
+    }
+
+    function isValidDailyLog(data) {
+      return data.osId is string &&
+             data.date is string &&
+             data.amount is number &&
+             data.operatorId is string;
+    }
+
+    match /dailyLogs/{logId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated();
+      allow delete: if isAdmin();
+    }
+
+    match /plannings/{planningId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated();
+      allow delete: if isAuthenticated();
+    }
+
+    match /productionCycles/{cycleId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated();
+      allow delete: if isAuthenticated();
+    }
+
+    match /attendances/{attendanceId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated();
+    }
+
+    match /users/{userId} {
+      allow get: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+      allow list: if isAuthenticated() && (request.auth.uid == userId || resource.data.email == request.auth.token.email || isAdmin());
+      allow create: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+      allow update: if isAuthenticated() && (isAdmin() || (request.auth.uid == userId && request.resource.data.role == resource.data.role));
+      allow delete: if isAdmin();
+    }
+
+    match /settings/{settingId} {
+      allow read: if isAuthenticated();
+      allow write: if isManager();
+    }
+  }
+}

@@ -1,0 +1,339 @@
+{
+  "entities": {
+    "Field": {
+      "title": "Field",
+      "description": "Talhão florestal",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "area": { "type": "number" },
+        "geneticMaterial": { "type": "string" },
+        "image": { "type": "string" }
+      },
+      "required": ["name", "area"]
+    },
+    "StockMovement": {
+      "title": "StockMovement",
+      "description": "Movimentação de estoque",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "inputId": { "type": "string" },
+        "type": { "type": "string", "enum": ["entry", "exit", "os_deduction"] },
+        "amount": { "type": "number" },
+        "date": { "type": "string" },
+        "invoiceNumber": { "type": "string" },
+        "recipient": { "type": "string" },
+        "location": { "type": "string" },
+        "description": { "type": "string" }
+      },
+      "required": ["inputId", "type", "amount", "date"]
+    },
+    "Operator": {
+      "title": "Operator",
+      "description": "Operador florestal",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "specialty": { "type": "string" },
+        "experience": { "type": "string" },
+        "status": { "type": "string" },
+        "avatar": { "type": "string" },
+        "productionHistory": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "osId": { "type": "string" },
+              "date": { "type": "string" },
+              "activityName": { "type": "string" },
+              "fieldName": { "type": "string" },
+              "fieldArea": { "type": "number" },
+              "performedArea": { "type": "number" },
+              "paidArea": { "type": "number" },
+              "bonusValue": { "type": "number" },
+              "bonusUnit": { "type": "string" },
+              "totalBonus": { "type": "number" }
+            }
+          }
+        }
+      },
+      "required": ["name"]
+    },
+    "InputItem": {
+      "title": "InputItem",
+      "description": "Insumo florestal",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "activeIngredient": { "type": "string" },
+        "type": { "type": "string" },
+        "brand": { "type": "string" },
+        "stock": { "type": "number" },
+        "minStock": { "type": "number" },
+        "unit": { "type": "string" }
+      },
+      "required": ["name", "stock", "unit"]
+    },
+    "Machine": {
+      "title": "Machine",
+      "description": "Máquina/Trator da frota",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "modelId": { "type": "string" },
+        "hours": { "type": "number" },
+        "lastMaintenance": { "type": "string" },
+        "lastRevisionHours": { "type": "number" },
+        "revisionInterval": { "type": "number" },
+        "location": { "type": "string" },
+        "image": { "type": "string" },
+        "status": { "type": "string" },
+        "maintenanceHistory": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "date": { "type": "string" },
+              "hours": { "type": "number" },
+              "description": { "type": "string" },
+              "type": { "type": "string", "enum": ["preventive", "corrective"] }
+            }
+          }
+        }
+      },
+      "required": ["name", "modelId", "hours"]
+    },
+    "Implement": {
+      "title": "Implement",
+      "description": "Implemento agrícola",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "type": { "type": "string" },
+        "brand": { "type": "string" },
+        "width": { "type": "number" },
+        "nozzles": { "type": "number" },
+        "status": { "type": "string" },
+        "image": { "type": "string" },
+        "lastRevisionHours": { "type": "number" },
+        "revisionInterval": { "type": "number" },
+        "maintenanceHistory": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "date": { "type": "string" },
+              "hours": { "type": "number" },
+              "description": { "type": "string" },
+              "type": { "type": "string", "enum": ["preventive", "corrective"] },
+              "cost": { "type": "number" }
+            }
+          }
+        }
+      },
+      "required": ["name", "modelId", "hours"]
+    },
+    "ServiceOrder": {
+      "title": "ServiceOrder",
+      "description": "Ordem de Serviço",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "fieldId": { "type": "string" },
+        "operatorId": { "type": "string" },
+        "activity": { "type": "string" },
+        "targetRate": { "type": "number" },
+        "totalPlannedVolume": { "type": "number" },
+        "status": { "type": "string", "enum": ["active", "completed", "cancelled"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "completedAt": { "type": "string", "format": "date-time" },
+        "totalApplied": { "type": "number" },
+        "deviation": { "type": "number" }
+      },
+      "required": ["fieldId", "operatorId", "activity", "targetRate", "totalPlannedVolume", "status"]
+    },
+    "DailyLog": {
+      "title": "DailyLog",
+      "description": "Registro diário de aplicação",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "osId": { "type": "string" },
+        "date": { "type": "string", "format": "date-time" },
+        "amount": { "type": "number" },
+        "operatorId": { "type": "string" },
+        "startHourMeter": { "type": "number" },
+        "endHourMeter": { "type": "number" }
+      },
+      "required": ["osId", "date", "amount", "operatorId"]
+    },
+    "ActivityCategory": {
+      "title": "ActivityCategory",
+      "description": "Categoria de atividade florestal",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "icon": { "type": "string" }
+      },
+      "required": ["name"]
+    },
+    "Planning": {
+      "title": "Planning",
+      "description": "Planejamento de operações florestais",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "activityId": { "type": "string" },
+        "items": { "type": "array" },
+        "dailyGoal": { "type": "number" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["name", "activityId", "items", "dailyGoal", "status"]
+    },
+    "ActivityDefinition": {
+      "title": "ActivityDefinition",
+      "description": "Definição de atividade florestal",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "category": { "type": "string" },
+        "unit": { "type": "string", "enum": ["L", "kg", "unidade"] },
+        "dailyGoal": { "type": "number" },
+        "description": { "type": "string" },
+        "bonusValue": { "type": "number" },
+        "bonusUnit": { "type": "string", "enum": ["ha", "hour"] }
+      },
+      "required": ["name", "category", "unit"]
+    },
+    "Attendance": {
+      "title": "Attendance",
+      "description": "Registro de presença e alocação diária",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "date": { "type": "string" },
+        "workerId": { "type": "string" },
+        "workerName": { "type": "string" },
+        "status": { "type": "string", "enum": ["present", "absent", "leave"] },
+        "osId": { "type": "string" },
+        "activityName": { "type": "string" },
+        "fieldName": { "type": "string" },
+        "notes": { "type": "string" }
+      },
+      "required": ["date", "workerId", "workerName", "status"]
+    },
+    "User": {
+      "title": "User",
+      "description": "Usuário do sistema",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "manager", "operator"] },
+        "photoURL": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "ProductionCycle": {
+      "title": "ProductionCycle",
+      "description": "Cronograma de ciclo produtivo",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "fieldIds": { "type": "array", "items": { "type": "string" } },
+        "steps": { 
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "planningId": { "type": "string" },
+              "activityName": { "type": "string" },
+              "order": { "type": "number" },
+              "expectedDays": { "type": "number" },
+              "status": { "type": "string", "enum": ["pending", "in_progress", "completed", "delayed"] },
+              "startDate": { "type": "string" },
+              "endDate": { "type": "string" }
+            }
+          }
+        },
+        "status": { "type": "string", "enum": ["active", "completed", "delayed"] },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["name", "fieldIds", "steps", "status", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Coleção de usuários"
+    },
+    "/fields/{fieldId}": {
+      "schema": "Field",
+      "description": "Coleção de talhões"
+    },
+    "/operators/{operatorId}": {
+      "schema": "Operator",
+      "description": "Coleção de operadores"
+    },
+    "/inputs/{inputId}": {
+      "schema": "InputItem",
+      "description": "Coleção de insumos"
+    },
+    "/stockMovements/{movementId}": {
+      "schema": "StockMovement",
+      "description": "Coleção de movimentações de estoque"
+    },
+    "/fleet/{machineId}": {
+      "schema": "Machine",
+      "description": "Coleção de máquinas da frota"
+    },
+    "/implements/{implementId}": {
+      "schema": "Implement",
+      "description": "Coleção de implementos"
+    },
+    "/serviceOrders/{osId}": {
+      "schema": "ServiceOrder",
+      "description": "Coleção de ordens de serviço"
+    },
+    "/dailyLogs/{logId}": {
+      "schema": "DailyLog",
+      "description": "Coleção de registros diários"
+    },
+    "/activityCategories/{categoryId}": {
+      "schema": "ActivityCategory",
+      "description": "Coleção de categorias de atividades"
+    },
+    "/activityDefinitions/{activityId}": {
+      "schema": "ActivityDefinition",
+      "description": "Coleção de definições de atividades"
+    },
+    "/plannings/{planningId}": {
+      "schema": "Planning",
+      "description": "Coleção de planejamentos"
+    },
+    "/productionCycles/{cycleId}": {
+      "schema": "ProductionCycle",
+      "description": "Coleção de ciclos produtivos"
+    },
+    "/attendances/{attendanceId}": {
+      "schema": "Attendance",
+      "description": "Coleção de presenças e alocações"
+    }
+  }
+}

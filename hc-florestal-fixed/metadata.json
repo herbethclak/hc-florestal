@@ -1,0 +1,7 @@
+{
+  "name": "HC GESTÃO FLORESTAL",
+  "description": "Plataforma de alta precisão para gestão de operações florestais, rastreamento de frota e otimização de recursos.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}

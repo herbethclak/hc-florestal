@@ -1,0 +1,275 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-headline: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-label: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  /* Design System Colors */
+  --color-primary: #0d631b;
+  --color-primary-container: #2e7d32;
+  --color-primary-fixed: #a3f69c;
+  --color-on-primary-fixed: #002204;
+  --color-on-primary-fixed-variant: #005312;
+  
+  --color-secondary: #005db7;
+  --color-secondary-container: #64a1ff;
+  --color-secondary-fixed: #d6e3ff;
+  --color-on-secondary-fixed: #001b3d;
+  --color-on-secondary-fixed-variant: #00468c;
+
+  --color-tertiary: #824600;
+  --color-tertiary-container: #a55b00;
+  --color-tertiary-fixed: #ffdcc2;
+  --color-on-tertiary-fixed: #2e1500;
+  --color-on-tertiary-fixed-variant: #6d3a00;
+
+  --color-background: #f6fbed;
+  --color-on-background: #181d15;
+  
+  --color-surface: #f6fbed;
+  --color-on-surface: #181d15;
+  --color-on-surface-variant: #40493d;
+  
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f0f6e8;
+  --color-surface-container: #eaf0e2;
+  --color-surface-container-high: #e4eadc;
+  --color-surface-container-highest: #dfe5d7;
+  --color-surface-variant: #dfe5d7;
+  
+  --color-outline: #707a6c;
+  --color-outline-variant: #bfcaba;
+  
+  --color-error: #ba1a1a;
+  --color-error-container: #ffdad6;
+  --color-on-error: #ffffff;
+  --color-on-error-container: #93000a;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-on-background font-body antialiased;
+  }
+}
+
+@layer utilities {
+  .tonal-stepping {
+    background: linear-gradient(180deg, var(--color-surface-container-low) 0%, var(--color-surface-container) 100%);
+  }
+  .glass {
+    @apply bg-surface-variant/40 backdrop-blur-xl border border-outline-variant/20;
+  }
+}
+
+@media print {
+  @page {
+    margin: 1.5cm;
+    size: A4;
+  }
+  
+  body {
+    background: white !important;
+    color: black !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .no-print, header, nav, footer, [class*="BottomNav"], [class*="TopBar"] {
+    display: none !important;
+  }
+
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
+  }
+}
+
+.printable-os {
+  /* Force hex/rgb colors to avoid oklab/oklch parsing errors in html2canvas */
+  --color-primary: #0d631b !important;
+  --color-primary-container: #2e7d32 !important;
+  --color-secondary: #005db7 !important;
+  --color-tertiary: #824600 !important;
+  --color-on-primary: #ffffff !important;
+  --color-surface-container-lowest: #ffffff !important;
+  --color-surface-container-low: #f0f6e8 !important;
+  --color-surface-container: #eaf0e2 !important;
+  --color-on-surface: #181d15 !important;
+  --color-on-surface-variant: #40493d !important;
+  --color-outline-variant: #e0e0e0 !important;
+  --color-outline: #bdbdbd !important;
+  --color-background: #ffffff !important;
+  
+  background-color: #ffffff !important;
+  color: #181d15 !important;
+  font-family: 'Inter', sans-serif !important;
+  color-scheme: light !important;
+}
+
+.printable-os * {
+  border-color: #e0e0e0 !important;
+  outline-color: #e0e0e0 !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+/* Specific utility overrides for PDF compatibility */
+.printable-os .bg-primary\/5 { background-color: rgba(13, 99, 27, 0.05) !important; }
+.printable-os .bg-secondary\/5 { background-color: rgba(0, 93, 183, 0.05) !important; }
+.printable-os .bg-tertiary\/5 { background-color: rgba(130, 70, 0, 0.05) !important; }
+.printable-os .bg-primary\/10 { background-color: rgba(13, 99, 27, 0.1) !important; }
+.printable-os .bg-primary\/20 { background-color: rgba(13, 99, 27, 0.2) !important; }
+
+.printable-os .border-primary\/10 { border-color: rgba(13, 99, 27, 0.1) !important; }
+.printable-os .border-primary\/20 { border-color: rgba(13, 99, 27, 0.2) !important; }
+.printable-os .border-secondary\/10 { border-color: rgba(0, 93, 183, 0.1) !important; }
+.printable-os .border-tertiary\/10 { border-color: rgba(130, 70, 0, 0.1) !important; }
+.printable-os .border-outline-variant\/20 { border-color: rgba(191, 202, 186, 0.2) !important; }
+.printable-os .border-outline-variant\/30 { border-color: rgba(191, 202, 186, 0.3) !important; }
+.printable-os .border-outline-variant { border-color: #e0e0e0 !important; }
+.printable-os .border-on-surface { border-color: #181d15 !important; }
+
+.printable-os .text-primary { color: #0d631b !important; }
+.printable-os .text-secondary { color: #005db7 !important; }
+.printable-os .text-tertiary { color: #824600 !important; }
+.printable-os .text-on-surface { color: #181d15 !important; }
+.printable-os .text-on-surface-variant { color: #40493d !important; }
+.printable-os .text-error { color: #ba1a1a !important; }
+
+.printable-os .bg-primary { background-color: #0d631b !important; color: #ffffff !important; }
+.printable-os .bg-gray-50 { background-color: #f9fafb !important; }
+.printable-os .bg-gray-100 { background-color: #f3f4f6 !important; }
+.printable-os .bg-white { background-color: #ffffff !important; }
+.printable-os .bg-surface-container-low { background-color: #f0f6e8 !important; }
+.printable-os .bg-surface-container { background-color: #eaf0e2 !important; }
+.printable-os .bg-surface-container-lowest { background-color: #ffffff !important; }
+
+.printable-os .border-gray-100 { border-color: #f3f4f6 !important; }
+.printable-os .border-gray-200 { border-color: #e5e7eb !important; }
+.printable-os .border-gray-400 { border-color: #9ca3af !important; }
+.printable-os .border-primary { border-color: #0d631b !important; }
+
+.printable-os .text-gray-400 { color: #9ca3af !important; }
+.printable-os .text-gray-500 { color: #6b7280 !important; }
+.printable-os .text-green-600 { color: #16a34a !important; }
+.printable-os .text-red-600 { color: #dc2626 !important; }
+.printable-os .bg-blue-600\/5 { background-color: rgba(37, 99, 235, 0.05) !important; }
+.printable-os .border-blue-600\/10 { border-color: rgba(37, 99, 235, 0.1) !important; }
+.printable-os .text-blue-600 { color: #2563eb !important; }
+
+.printable-os .bg-orange-600\/5 { background-color: rgba(234, 88, 12, 0.05) !important; }
+.printable-os .border-orange-600\/10 { border-color: rgba(234, 88, 12, 0.1) !important; }
+.printable-os .text-orange-600 { color: #ea580c !important; }
+
+.printable-os .bg-tertiary\/5 { background-color: rgba(234, 88, 12, 0.05) !important; }
+.printable-os .border-tertiary\/10 { border-color: rgba(234, 88, 12, 0.1) !important; }
+.printable-os .text-tertiary { color: #ea580c !important; }
+
+.printable-os .bg-secondary\/5 { background-color: rgba(37, 99, 235, 0.05) !important; }
+.printable-os .border-secondary\/10 { border-color: rgba(37, 99, 235, 0.1) !important; }
+.printable-os .text-secondary { color: #2563eb !important; }
+.printable-os .text-white { color: #ffffff !important; }
+
+/* PDF Rendering Improvements */
+.printable-os {
+  box-sizing: border-box !important;
+  overflow: visible !important;
+}
+
+.printable-os * {
+  box-sizing: border-box !important;
+  overflow: visible !important;
+  word-wrap: break-word !important;
+}
+
+.printable-os table {
+  width: 100% !important;
+  table-layout: fixed !important;
+  border-collapse: collapse !important;
+}
+
+.printable-os td, .printable-os th {
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+}
+
+.printable-os .grid {
+  display: block !important;
+}
+
+.printable-os .grid-cols-2 {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 1rem !important;
+}
+
+.printable-os .grid-cols-2 > * {
+  width: calc(50% - 0.5rem) !important;
+}
+
+.printable-os .grid-cols-4 {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 1rem !important;
+}
+
+.printable-os .grid-cols-4 > * {
+  width: calc(25% - 0.75rem) !important;
+}
+
+.printable-os .space-y-6 > * + * {
+  margin-top: 1.5rem !important;
+}
+
+.printable-os .space-y-4 > * + * {
+  margin-top: 1rem !important;
+}
+
+.printable-os .space-y-2 > * + * {
+  margin-top: 0.5rem !important;
+}
+
+.printable-os .space-y-1 > * + * {
+  margin-top: 0.25rem !important;
+}
+.printable-os .text-black { color: #000000 !important; }
+
+@media print {
+  @page {
+    margin: 1.5cm;
+    size: A4;
+  }
+  
+  body {
+    background: white !important;
+    color: black !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .printable-os {
+    visibility: visible !important;
+    display: block !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+  /* Reset background colors for print if needed */
+  .bg-primary {
+    background-color: #0d631b !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .text-on-primary {
+    color: white !important;
+  }
+}
+
+.print-only {
+  display: none;
+}
